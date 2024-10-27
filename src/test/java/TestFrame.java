@@ -1,8 +1,7 @@
 import io.github.evalexp.Launcher;
+import io.github.evalexp.annotations.*;
 import io.github.evalexp.annotations.Container;
 import io.github.evalexp.annotations.Frame;
-import io.github.evalexp.annotations.I18N;
-import io.github.evalexp.annotations.Initializer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,9 +24,15 @@ public class TestFrame extends JFrame {
         JLabel test = this.container.newComponent(JLabel.class, "title", "Hello");
         this.getContentPane().add(test, BorderLayout.SOUTH);
         this.setSize(800, 600);
+        this.container.packComponent(this, "title");
     }
 
     public static void main(String[] args) {
         Launcher.launch(TestFrame.class);
+    }
+
+    @I18NMethod
+    public void setText(String text) {
+        this.setTitle(text);
     }
 }

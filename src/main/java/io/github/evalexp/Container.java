@@ -17,6 +17,8 @@ public class Container {
     private Object frame;
     // components container
     private Map<Object, String> components = new LinkedHashMap<>();
+    // components i18n compatible method
+    private Map<Object, Method> methods = new LinkedHashMap<>();
     // i18n change method
     private List<String> i18nSearchMethods;
 
@@ -113,8 +115,15 @@ public class Container {
      * @param i18nKey i18n text key, search in language file
      */
     private void tryRenderComponent(Object component, String i18nKey) {
-        Method i18nCompatibleMethod = ReflectUtil.searchI18NCompatibleMethod(component, this.i18nSearchMethods);
+        Method i18nCompatibleMethod = this.methods.get(component);
+        if (i18nCompatibleMethod == null) {
+            i18nCompatibleMethod = ReflectUtil.searchI18NCompatibleMethod(component);
+        }
+        if (i18nCompatibleMethod == null) {
+            i18nCompatibleMethod = ReflectUtil.searchI18NCompatibleMethod(component, this.i18nSearchMethods);
+        }
         if (i18nCompatibleMethod != null) {
+            if (!this.methods.containsKey(component)) this.methods.put(component, i18nCompatibleMethod);
             try {
                 i18nCompatibleMethod.invoke(component, Context.getLocale().text(i18nKey));
             } catch (IllegalAccessException | InvocationTargetException e) {

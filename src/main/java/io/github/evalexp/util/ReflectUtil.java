@@ -1,5 +1,7 @@
 package io.github.evalexp.util;
 
+import io.github.evalexp.annotations.I18NMethod;
+
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -86,6 +88,26 @@ public class ReflectUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * search i18n method
+     * @param object target object
+     * @return method if success, else null
+     */
+    public static Method searchI18NCompatibleMethod(Object object) {
+        Class<?> clazz = object.getClass();
+        Method method = null;
+        classSearch: while (clazz != Object.class) {
+            for (Method m : clazz.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(I18NMethod.class) && m.getParameterCount() == 1 && m.getParameterTypes()[0] == String.class) {
+                    method = m;
+                    break classSearch;
+                }
+            }
+            clazz = clazz.getSuperclass();
+        }
+        return method;
     }
 
     /**

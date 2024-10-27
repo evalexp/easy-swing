@@ -70,6 +70,9 @@ public class Context {
     public static boolean setLookAndFeel(LookAndFeel lookAndFeel) {
         try {
             UIManager.setLookAndFeel(lookAndFeel);
+            for (Container container : Context.containers.values()) {
+                SwingUtilities.updateComponentTreeUI((JFrame)container.getFrame());
+            }
             return true;
         } catch (Exception e) {
             return false;
